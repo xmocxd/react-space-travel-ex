@@ -1,5 +1,18 @@
 import SpaceTravelMockApi from "./SpaceTravelMockApi.js";
 
+
+// getPlanets	getPlanets (): Array<planet>	Fetches all planets.
+// getSpacecrafts	getSpacecrafts (): Array<spacecraft>	Fetches all spacecraft.
+// getSpacecraftById	getSpacecraftById ({id: <string>}): <spacecraft>	Fetches a spacecraft by its ID.
+// buildSpacecraft	createSpacecraft ({name: <string>, capacity: <int>, description <string>, pictureUrl: [<string>]}):
+//  void (means pictureUrl is optional)	Builds a spacecraft on the Earth by generating an ID.
+//  destroySpacecraftById	destroySpacecraftById ({id: <int>}): void	Deletes a spacecraft by its ID.
+// sendSpacecraftToPlanet	sendSpacecraftToPlanet ({spacecraftId: <string>, targetPlanetId: <int>}): void	Transfer people
+//  by sending the spacecraft from its currently located planet to the target planet.
+// - If the capacity is greater than the current population of the currently located planet, it fills as much as it gets.
+// - Throws an error if the target planet is the same as the currently located planet.
+
+
 class SpaceTravelApi
 {
   static async getPlanets ()
