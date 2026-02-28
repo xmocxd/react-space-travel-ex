@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import SpaceTravelApi from '../services/SpaceTravelApi';
 
 /**
  * Planet Context
- * 
+ *
  * Purpose: Provide global state management for planet data across the application.
- * 
+ *
  * Context Value:
  * - planets (array): List of all planets with stationed spacecraft
  * - loading (boolean): Loading state for planet operations
@@ -12,14 +13,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
  * - fetchPlanets (function): Fetch all planets from API
  * - dispatchSpacecraft (function): Send spacecraft to a planet
  * - getPlanetById (function): Get a specific planet by ID
- * 
- * TODO: Implement the following features:
- * - State management for planets list
- * - Loading and error states
- * - Fetch planets with stationed spacecraft
- * - Dispatch spacecraft to planets
- * - Integration with SpaceTravelApi service
- * - Error handling
  */
 
 const PlanetContext = createContext();
@@ -33,32 +26,86 @@ export function usePlanets() {
 }
 
 export function PlanetProvider({ children }) {
-  // TODO: Add state for planets list
-  // TODO: Add state for loading status
-  // TODO: Add state for errors
+  const [planets, setPlanets] = useState([]);
+  const [spacecraft, setSpacecraft] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // TODO: Implement fetchPlanets function
-  // - Call API to get all planets
-  // - Include stationed spacecraft for each planet
-  // - Update state with results
-  // - Handle loading and errors
+  const fetchPlanets = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [planetsRes, spacecraftRes] = await Promise.all([
+        SpaceTravelApi.getPlanets(),
+        SpaceTravelApi.getSpacecrafts(),
+      ]);
+      if (planetsRes?.isError) {
+        setError(planetsRes.data?.message ?? 'Failed to fetch planets');
+        return;
+      }
+      if (spacecraftRes?.isError) {
+        setError(spacecraftRes.data?.message ?? 'Failed to fetch spacecraft');
+        return;
+      }
+      setPlanets(planetsRes?.data ?? []);
+      setSpacecraft(spacecraftRes?.data ?? []);
+    } catch (err) {
+      setError(err?.message ?? 'Failed to fetch planets');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  // TODO: Implement dispatchSpacecraft function
-  // - Accept spacecraft ID and destination planet ID
-  // - Validate that destination differs from current location
-  // - Call API to dispatch spacecraft
-  // - Refresh planets data on success
-  // - Handle errors
+  const dispatchSpacecraft = useCallback(
+    async (spacecraftId, targetPlanetId) => {
+      setError(null);
+      try {
+        const res = await SpaceTravelApi.sendSpacecraftToPlanet({
+          spacecraftId,
+          targetPlanetId,
+        });
+        if (res?.isError) {
+          setError(res.data?.message ?? 'Failed to dispatch spacecraft');
+          return;
+        }
+        await fetchPlanets();
+      } catch (err) {
+        setError(err?.message ?? 'Failed to dispatch spacecraft');
+      }
+    },
+    [fetchPlanets]
+  );
 
-  // TODO: Implement getPlanetById function
-  // - Accept planet ID
-  // - Return planet from state
-  // - Handle errors
+  const getPlanetById = useCallback(
+    (planetId) => {
+      return planets.find((p) => p.id === planetId) ?? null;
+    },
+    [planets]
+  );
 
-  // TODO: Fetch planets on mount
+  const getSpacecraftAtPlanet = useCallback(
+    (planetId) => {
+      return spacecraft.filter((s) => s.currentLocation === planetId);
+    },
+    [spacecraft]
+  );
+
+  const clearError = useCallback(() => setError(null), []);
+
+  useEffect(() => {
+    fetchPlanets();
+  }, [fetchPlanets]);
 
   const value = {
-    // TODO: Expose state and functions
+    planets,
+    spacecraft,
+    loading,
+    error,
+    clearError,
+    fetchPlanets,
+    dispatchSpacecraft,
+    getPlanetById,
+    getSpacecraftAtPlanet,
   };
 
   return (

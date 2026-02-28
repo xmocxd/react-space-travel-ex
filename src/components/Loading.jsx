@@ -2,24 +2,20 @@ import React from 'react';
 
 /**
  * Loading Component
- * 
+ *
  * Purpose: Manage and display loading states during API response times.
- * 
+ *
  * Props:
  * - message (string, optional): Custom loading message to display
- * 
- * TODO: Implement the following features:
- * - Display a loading spinner or animation
- * - Show customizable loading message
- * - Style appropriately for visibility
- * - Consider adding animation for better UX
  */
 function Loading({ message = 'Loading...' }) {
   return (
-    <div className="loading-component">
-      {/* TODO: Add loading spinner/animation */}
-      {/* TODO: Add loading icon or graphic */}
-      <p>{message}</p>
+    <div className="loading-component flex flex-col items-center justify-center gap-4 py-12">
+      <div
+        className="h-12 w-12 animate-spin rounded-full border-4 border-slate-500 border-t-cyan-400"
+        aria-hidden
+      />
+      <p className="text-slate-300">{message}</p>
     </div>
   );
 }

@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import SpaceTravelApi from '../services/SpaceTravelApi';
 
 /**
  * Spacecraft Context
- * 
+ *
  * Purpose: Provide global state management for spacecraft data across the application.
- * 
+ *
  * Context Value:
  * - spacecraft (array): List of all spacecraft
  * - loading (boolean): Loading state for spacecraft operations
@@ -13,13 +14,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
  * - addSpacecraft (function): Create a new spacecraft
  * - removeSpacecraft (function): Decommission a spacecraft
  * - getSpacecraftById (function): Get a specific spacecraft by ID
- * 
- * TODO: Implement the following features:
- * - State management for spacecraft list
- * - Loading and error states
- * - CRUD operations for spacecraft
- * - Integration with SpaceTravelApi service
- * - Error handling
  */
 
 const SpacecraftContext = createContext();
@@ -33,36 +27,89 @@ export function useSpacecraft() {
 }
 
 export function SpacecraftProvider({ children }) {
-  // TODO: Add state for spacecraft list
-  // TODO: Add state for loading status
-  // TODO: Add state for errors
+  const [spacecraft, setSpacecraft] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // TODO: Implement fetchSpacecraft function
-  // - Call API to get all spacecraft
-  // - Update state with results
-  // - Handle loading and errors
+  const fetchSpacecraft = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await SpaceTravelApi.getSpacecrafts();
+      if (res?.isError) {
+        setError(res.data?.message ?? 'Failed to fetch spacecraft');
+        return;
+      }
+      setSpacecraft(res?.data ?? []);
+    } catch (err) {
+      setError(err?.message ?? 'Failed to fetch spacecraft');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  // TODO: Implement addSpacecraft function
-  // - Accept spacecraft data (name, capacity, description)
-  // - Call API to create spacecraft
-  // - Update local state on success
-  // - Handle errors
+  const addSpacecraft = useCallback(async (data) => {
+    setError(null);
+    try {
+      const res = await SpaceTravelApi.buildSpacecraft({
+        name: data.name,
+        capacity: Number(data.capacity),
+        description: data.description,
+        pictureUrl: data.pictureUrl,
+      });
+      if (res?.isError) {
+        setError(res.data?.message ?? 'Failed to create spacecraft');
+        return { success: false };
+      }
+      await fetchSpacecraft();
+      return { success: true };
+    } catch (err) {
+      setError(err?.message ?? 'Failed to create spacecraft');
+      return { success: false };
+    }
+  }, [fetchSpacecraft]);
 
-  // TODO: Implement removeSpacecraft function
-  // - Accept spacecraft ID
-  // - Call API to decommission spacecraft
-  // - Update local state on success
-  // - Handle errors
+  const removeSpacecraft = useCallback(
+    async (id) => {
+      setError(null);
+      try {
+        const res = await SpaceTravelApi.destroySpacecraftById({ id });
+        if (res?.isError) {
+          setError(res.data?.message ?? 'Failed to decommission spacecraft');
+          return false;
+        }
+        setSpacecraft((prev) => prev.filter((s) => s.id !== id));
+        return true;
+      } catch (err) {
+        setError(err?.message ?? 'Failed to decommission spacecraft');
+        return false;
+      }
+    },
+    []
+  );
 
-  // TODO: Implement getSpacecraftById function
-  // - Accept spacecraft ID
-  // - Return spacecraft from state or fetch from API
-  // - Handle errors
+  const getSpacecraftById = useCallback(
+    (id) => {
+      return spacecraft.find((s) => s.id === id) ?? null;
+    },
+    [spacecraft]
+  );
 
-  // TODO: Fetch spacecraft on mount
+  useEffect(() => {
+    fetchSpacecraft();
+  }, [fetchSpacecraft]);
+
+  const clearError = useCallback(() => setError(null), []);
 
   const value = {
-    // TODO: Expose state and functions
+    spacecraft,
+    loading,
+    error,
+    clearError,
+    fetchSpacecraft,
+    addSpacecraft,
+    removeSpacecraft,
+    getSpacecraftById,
   };
 
   return (

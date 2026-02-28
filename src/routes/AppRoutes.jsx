@@ -5,12 +5,13 @@ import Spacecraft from '../pages/Spacecraft';
 import Construction from '../pages/Construction';
 import Planets from '../pages/Planets';
 import RootLayout from './RootLayout';
+import RouteErrorBoundary from '../components/RouteErrorBoundary';
 
 /**
  * Router Configuration
- * 
+ *
  * Purpose: Define all application routes using createBrowserRouter.
- * 
+ *
  * Routes:
  * - / : Home page
  * - /spacecrafts : List all spacecraft
@@ -18,17 +19,14 @@ import RootLayout from './RootLayout';
  * - /construction : Create new spacecraft
  * - /planets : View and manage planets
  * - * : Redirect unmatched routes to homepage
- * 
- * TODO: Implement the following features:
- * - Add route loaders for data fetching
- * - Add route actions for form submissions
- * - Implement error boundaries per route
- * - Add route guards if authentication is needed later
+ *
+ * Error boundaries are set at the layout level to catch route/loader errors.
  */
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         index: true,

@@ -1,31 +1,56 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 /**
  * SpacecraftCard Component
- * 
+ *
  * Purpose: Reusable card component to display spacecraft information in lists.
- * 
+ *
  * Props:
  * - spacecraft (object): Spacecraft data to display
+ * - currentPlanetName (string, optional): Name of current location planet
  * - onDecommission (function, optional): Handler for decommission action
  * - showActions (boolean, optional): Whether to show action buttons
- * 
- * TODO: Implement the following features:
- * - Display spacecraft name, capacity, description
- * - Display current location/planet
- * - Link to detailed spacecraft view
- * - Optional decommission button
- * - Consistent styling
  */
-function SpacecraftCard({ spacecraft, onDecommission, showActions = true }) {
+function SpacecraftCard({
+  spacecraft,
+  currentPlanetName,
+  onDecommission,
+  showActions = true,
+}) {
+  if (!spacecraft) return null;
+
   return (
-    <div className="spacecraft-card">
-      {/* TODO: Display spacecraft.name */}
-      {/* TODO: Display spacecraft.capacity */}
-      {/* TODO: Display spacecraft.description */}
-      {/* TODO: Display spacecraft.currentPlanet or location */}
-      {/* TODO: Add Link to spacecraft detail page */}
-      {/* TODO: Conditionally render decommission button based on showActions */}
+    <div className="spacecraft-card rounded-xl border border-slate-600 bg-slate-800/50 p-5 shadow-lg">
+      <h3 className="text-lg font-semibold text-white">{spacecraft.name}</h3>
+      <p className="mt-1 text-sm text-slate-400">
+        Capacity: {spacecraft.capacity?.toLocaleString() ?? '—'}
+      </p>
+      {spacecraft.description && (
+        <p className="mt-2 line-clamp-2 text-sm text-slate-300">
+          {spacecraft.description}
+        </p>
+      )}
+      <p className="mt-2 text-sm text-slate-400">
+        Location: {currentPlanetName ?? `Planet ID ${spacecraft.currentLocation}`}
+      </p>
+      <div className="mt-4 flex items-center gap-3">
+        <Link
+          to={`/spacecrafts/${spacecraft.id}`}
+          className="text-cyan-400 hover:underline"
+        >
+          View details
+        </Link>
+        {showActions && typeof onDecommission === 'function' && (
+          <button
+            type="button"
+            onClick={() => onDecommission(spacecraft.id)}
+            className="rounded bg-red-600/80 px-3 py-1 text-sm text-white hover:bg-red-600"
+          >
+            Decommission
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -4,30 +4,24 @@ import Navigation from '../components/Navigation';
 
 /**
  * RootLayout Component
- * 
+ *
  * Purpose: Provides the main layout structure for all routes.
  * Contains the navigation and outlet for nested routes.
- * 
- * TODO: Implement the following features:
- * - Add global error boundary
- * - Add layout-level loading states
- * - Add any persistent UI elements (header, footer)
  */
 function RootLayout() {
   return (
-    <div className="app">
-      <header>
-        <h1>Space Travel</h1>
+    <div className="app min-h-screen flex flex-col">
+      <header className="border-b border-slate-700 px-4 py-3">
+        <h1 className="text-xl font-bold text-white">Space Travel</h1>
         <Navigation />
       </header>
-      
-      <main>
-        {/* Outlet renders the matched child route */}
+
+      <main className="flex-1 px-4 py-6">
         <Outlet />
       </main>
-      
-      <footer>
-        {/* TODO: Add footer content if needed */}
+
+      <footer className="border-t border-slate-700 px-4 py-3 text-center text-sm text-slate-500">
+        Space Travel — Manage your fleet across the solar system
       </footer>
     </div>
   );
