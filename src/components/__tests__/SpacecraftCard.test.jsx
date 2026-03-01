@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import SpacecraftCard from '../SpacecraftCard';
 
-const mockSpacecraft = {
+const craft = {
   id: 'craft-1',
   name: 'Voyager',
   capacity: 5000,
@@ -11,57 +11,44 @@ const mockSpacecraft = {
   currentLocation: 2,
 };
 
-function renderWithRouter(ui) {
-  return render(<MemoryRouter>{ui}</MemoryRouter>);
-}
+const r = (ui) => render(<MemoryRouter>{ui}</MemoryRouter>);
 
 describe('SpacecraftCard', () => {
-  it('renders spacecraft name and capacity', () => {
-    renderWithRouter(<SpacecraftCard spacecraft={mockSpacecraft} />);
+  it('renders name and capacity', () => {
+    r(<SpacecraftCard spacecraft={craft} />);
     expect(screen.getByText('Voyager')).toBeInTheDocument();
     expect(screen.getByText(/5,000/)).toBeInTheDocument();
   });
 
-  it('renders current planet name when provided', () => {
-    renderWithRouter(
-      <SpacecraftCard spacecraft={mockSpacecraft} currentPlanetName="Earth" />
-    );
-    expect(screen.getByText(/Location: Earth/)).toBeInTheDocument();
+  it('renders current planet when provided', () => {
+    r(<SpacecraftCard spacecraft={craft} currentPlanetName="Earth" />);
+    expect(screen.getByText('Earth')).toBeInTheDocument();
   });
 
-  it('renders planet ID when currentPlanetName is not provided', () => {
-    renderWithRouter(<SpacecraftCard spacecraft={mockSpacecraft} />);
-    expect(screen.getByText(/Location: Planet ID 2/)).toBeInTheDocument();
+  it('renders planet ID when currentPlanetName missing', () => {
+    r(<SpacecraftCard spacecraft={craft} />);
+    expect(screen.getByText(/Planet ID 2/)).toBeInTheDocument();
   });
 
-  it('links to spacecraft detail page', () => {
-    renderWithRouter(<SpacecraftCard spacecraft={mockSpacecraft} />);
-    const link = screen.getByRole('link', { name: /view details/i });
-    expect(link).toHaveAttribute('href', '/spacecrafts/craft-1');
+  it('links to detail page', () => {
+    r(<SpacecraftCard spacecraft={craft} />);
+    expect(screen.getByRole('link', { name: /view details/i })).toHaveAttribute('href', '/spacecrafts/craft-1');
   });
 
-  it('calls onDecommission when Decommission is clicked', () => {
-    const onDecommission = jest.fn();
-    renderWithRouter(
-      <SpacecraftCard
-        spacecraft={mockSpacecraft}
-        onDecommission={onDecommission}
-        showActions
-      />
-    );
+  it('calls onDecommission when Decommission clicked', () => {
+    const fn = jest.fn();
+    r(<SpacecraftCard spacecraft={craft} onDecommission={fn} showActions />);
     fireEvent.click(screen.getByRole('button', { name: /decommission/i }));
-    expect(onDecommission).toHaveBeenCalledWith('craft-1');
+    expect(fn).toHaveBeenCalledWith('craft-1');
   });
 
-  it('does not render Decommission button when showActions is false', () => {
-    renderWithRouter(
-      <SpacecraftCard spacecraft={mockSpacecraft} showActions={false} />
-    );
+  it('hides Decommission when showActions false', () => {
+    r(<SpacecraftCard spacecraft={craft} showActions={false} />);
     expect(screen.queryByRole('button', { name: /decommission/i })).not.toBeInTheDocument();
   });
 
   it('returns null when spacecraft is null', () => {
-    const { container } = renderWithRouter(<SpacecraftCard spacecraft={null} />);
+    const { container } = r(<SpacecraftCard spacecraft={null} />);
     expect(container.firstChild).toBeNull();
   });
 });

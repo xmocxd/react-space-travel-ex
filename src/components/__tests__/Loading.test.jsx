@@ -3,19 +3,18 @@ import { render, screen } from '@testing-library/react';
 import Loading from '../Loading';
 
 describe('Loading', () => {
-  it('renders default message when no message prop is passed', () => {
+  it('renders default message', () => {
     render(<Loading />);
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
-  it('renders custom message when message prop is provided', () => {
+  it('renders custom message', () => {
     render(<Loading message="Fetching spacecraft..." />);
     expect(screen.getByText('Fetching spacecraft...')).toBeInTheDocument();
   });
 
-  it('has a loading spinner (aria-hidden element)', () => {
+  it('has spinner', () => {
     const { container } = render(<Loading />);
-    const spinner = container.querySelector('[aria-hidden]');
-    expect(spinner).toBeInTheDocument();
+    expect(container.querySelector('.animate-spin')).toBeInTheDocument();
   });
 });

@@ -8,21 +8,20 @@ describe('ErrorMessage', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders the error message', () => {
+  it('renders the message', () => {
     render(<ErrorMessage message="Something went wrong" />);
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
   });
 
-  it('renders a Dismiss button when onDismiss is provided', () => {
-    const onDismiss = jest.fn();
-    render(<ErrorMessage message="Error" onDismiss={onDismiss} />);
-    const button = screen.getByRole('button', { name: /dismiss/i });
-    expect(button).toBeInTheDocument();
-    fireEvent.click(button);
-    expect(onDismiss).toHaveBeenCalledTimes(1);
+  it('shows Dismiss button and calls onDismiss when provided', () => {
+    const fn = jest.fn();
+    render(<ErrorMessage message="Error" onDismiss={fn} />);
+    const btn = screen.getByRole('button', { name: /dismiss/i });
+    fireEvent.click(btn);
+    expect(fn).toHaveBeenCalledTimes(1);
   });
 
-  it('does not render Dismiss button when onDismiss is not provided', () => {
+  it('hides Dismiss when onDismiss not provided', () => {
     render(<ErrorMessage message="Error" />);
     expect(screen.queryByRole('button', { name: /dismiss/i })).not.toBeInTheDocument();
   });

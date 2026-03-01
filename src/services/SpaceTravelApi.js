@@ -22,7 +22,11 @@ class SpaceTravelApi
 
   static async getSpacecrafts ()
   {
-    return SpaceTravelMockApi.getSpacecrafts();
+    try {
+      return SpaceTravelMockApi.getSpacecrafts();
+    } catch (error) {
+      throw new Error("Failed to fetch spacecrafts. Please try again later.");
+    }
   }
 
   static async getSpacecraftById ({id})

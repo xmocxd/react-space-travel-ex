@@ -1,57 +1,36 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Home from '../pages/Home';
 import Spacecrafts from '../pages/Spacecrafts';
-import Spacecraft from '../pages/Spacecraft';
+import SpacecraftDetails from '../pages/SpacecraftDetails';
 import Construction from '../pages/Construction';
 import Planets from '../pages/Planets';
 import RootLayout from './RootLayout';
-import RouteErrorBoundary from '../components/RouteErrorBoundary';
+import RouteErrors from '../components/RouteErrors';
+import NotFound from '../pages/NotFound';
 
-/**
- * Router Configuration
- *
- * Purpose: Define all application routes using createBrowserRouter.
- *
- * Routes:
- * - / : Home page
- * - /spacecrafts : List all spacecraft
- * - /spacecrafts/:id : Individual spacecraft detail page
- * - /construction : Create new spacecraft
- * - /planets : View and manage planets
- * - * : Redirect unmatched routes to homepage
- *
- * Error boundaries are set at the layout level to catch route/loader errors.
- */
+import { Rocket, Globe } from 'lucide-react';
+
+// define navigation pages/links here so it can be managed in one file
+// do not include /, it will be added automatically in nav component
+const pages = [
+  { path: "spacecrafts/", title: "Spacecrafts", longTitle: "View Spacecrafts", icon: Rocket, showInNav: true },
+  { path: "planets/", title: "Planets", longTitle: "View Planets", icon: Globe, showInNav: true },
+  { path: "construction/", title: "Construction", longTitle: "Construct New Spacecraft", icon: Globe, showInNav: false },
+]
+
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RootLayout />,
-    errorElement: <RouteErrorBoundary />,
+    // main element to display the routes within -- passing pages to render the nav
+    element: <RootLayout pages={pages} />,
+    errorElement: <RouteErrors />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: 'spacecrafts',
-        element: <Spacecrafts />,
-      },
-      {
-        path: 'spacecrafts/:id',
-        element: <Spacecraft />,
-      },
-      {
-        path: 'construction',
-        element: <Construction />,
-      },
-      {
-        path: 'planets',
-        element: <Planets />,
-      },
-      {
-        path: '*',
-        element: <Navigate to="/" replace />,
-      },
+      { index: '/', element: <Home pages={pages} />, },
+      { path: 'spacecrafts', element: <Spacecrafts />, },
+      { path: 'spacecrafts/:id', element: <SpacecraftDetails />, },
+      { path: 'construction', element: <Construction />, },
+      { path: 'planets', element: <Planets />, },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);

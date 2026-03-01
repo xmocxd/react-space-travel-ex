@@ -3,162 +3,208 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2, Wrench } from 'lucide-react';
 import { useSpacecraft } from '../context/SpacecraftContext';
 import ErrorMessage from '../components/ErrorMessage';
+import { SHIP_IMAGE_OPTIONS } from '../constants/shipImages';
 
-/**
- * Construction Page Component
- *
- * Purpose: Allow users to construct (create) new spacecraft.
- */
 function Construction() {
   const navigate = useNavigate();
   const { addSpacecraft, error: apiError } = useSpacecraft();
-
-  const [formData, setFormData] = useState({
-    name: '',
-    capacity: '',
-    description: '',
-  });
-  const [validationErrors, setValidationErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  const validate = useCallback(() => {
-    const err = {};
-    if (!formData.name?.trim()) err.name = 'Name is required';
-    if (!formData.capacity?.trim()) err.capacity = 'Capacity is required';
-    else if (!/^\d+$/.test(formData.capacity) || Number(formData.capacity) < 1) {
-      err.capacity = 'Capacity must be a positive number';
+
+  // initial form state, builds the form within component return based on this structure
+  const initial = {
+    name: { value: '', text: 'Name', type: 'text', validator: /^.+$/, valid: true },
+    capacity: { value: '', text: 'Capacity', type: 'text', validator: /^[0-9]+$/, valid: true },
+    description: { value: '', text: 'Description', type: 'text', validator: /^.+$/, valid: true },
+    pictureUrl: { value: '', text: 'Ship image', type: 'image', validator: true, valid: true },
+  };
+
+  const [formState, setFormState] = useState(initial);
+  const [formValid, setFormValid] = useState(true);
+
+
+  function validateForm(state) {
+    // validate form, will update state with validation flags which can be used to highlight invalid fields
+    
+    let formValid = true;
+    let newState = { ...state };
+    
+    for (const field in state) {
+      const fieldData = state[field];
+      if (fieldData.validator instanceof RegExp && fieldData.validator.test(fieldData.value)) {
+        newState = {
+          ...newState,
+          [field]: { ...newState[field], valid: true }
+        };
+      } else if (typeof fieldData.validator === 'boolean' && fieldData.value === fieldData.validator) {
+        newState = {
+          ...newState,
+          [field]: { ...newState[field], valid: true }
+        };
+      } else {
+        formValid = false;
+        newState = {
+          ...newState,
+          [field]: { ...newState[field], valid: false }
+        };
+      }
     }
-    if (!formData.description?.trim()) err.description = 'Description is required';
-    setValidationErrors(err);
-    return Object.keys(err).length === 0;
-  }, [formData]);
-
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setValidationErrors((prev) => ({ ...prev, [name]: undefined }));
-  }, []);
-
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-      if (!validate()) return;
+    return { formValid, newState };
+  }
+  
+  function updateField({ field, value }) {
+    // update field value in state
+    
+    setFormState(state => ({
+      ...state,
+      [field]: { ...state[field], value: value }
+    }));
+  }
+  
+  
+  
+  async function submit() {
+    // validate form before submitting
+    
+    const { formValid, newState } = validateForm(formState);
+    
+    setFormValid(formValid);
+    
+    if (formValid) {
       setSubmitting(true);
-      const result = await addSpacecraft({
-        name: formData.name.trim(),
-        capacity: formData.capacity.trim(),
-        description: formData.description.trim(),
-      });
-      setSubmitting(false);
-      if (result?.success) navigate('/spacecrafts');
-    },
-    [formData, validate, addSpacecraft, navigate]
-  );
 
-  const handleCancel = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+      await formAction(newState);
+      console.log('Form submitted:', newState);
+      setFormState(initial); // clear form on submit
+
+      setSubmitting(false);
+    } else {
+      setFormState(newState); // update state with validation results
+    }
+  }
+  
+  
+  async function formAction(user) {
+    // do the action for the form if submission is valid
+    const result = await addSpacecraft({
+      name: user.name.value.trim(),
+      capacity: user.capacity.value.trim(),
+      description: user.description.value.trim(),
+      pictureUrl: user.pictureUrl?.value?.trim() || undefined,
+    });
+    if (result?.success) navigate('/spacecrafts');
+  }
+  
+  
 
   return (
-    <div className="construction-page space-y-8 sm:space-y-10">
+    <div className="construction-page space-y-5 sm:space-y-6">
       <div>
         <button
           type="button"
-          onClick={handleCancel}
           className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 text-base font-medium text-blue-400 hover:text-blue-300 transition-colors"
+          onClick={() => navigate('/spacecrafts')}
         >
-          <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
-          Back / Cancel
+          <ArrowLeft className="h-4 w-4 shrink-0" />
+          Back
         </button>
       </div>
 
-      <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-zinc-50">
-        <Wrench className="h-5 w-5 text-blue-500 shrink-0" aria-hidden />
+      <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight text-zinc-50 sm:text-2xl">
+        <Wrench className="h-5 w-5 text-blue-500 shrink-0" />
         Construct New Spacecraft
       </h2>
 
       {apiError && <ErrorMessage message={apiError} />}
 
-      <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-6">
-        <div>
-          <label htmlFor="name" className="block text-base font-medium text-zinc-300">
-            Name
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="mt-1.5 w-full min-h-[44px] rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-base text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-colors"
-          />
-          {validationErrors.name && (
-            <p className="mt-1 text-sm text-red-400">{validationErrors.name}</p>
-          )}
+      {!formValid && (
+        <div className="text-red-500 mb-4 text-sm sm:text-base">
+          Please correct the errors below and try again.
         </div>
+      )}
 
-        <div>
-          <label htmlFor="capacity" className="block text-base font-medium text-zinc-300">
-            Capacity
-          </label>
-          <input
-            id="capacity"
-            name="capacity"
-            type="number"
-            min="1"
-            value={formData.capacity}
-            onChange={handleChange}
-            required
-            className="mt-1.5 w-full min-h-[44px] rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-base text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-colors"
-          />
-          {validationErrors.capacity && (
-            <p className="mt-1 text-sm text-red-400">{validationErrors.capacity}</p>
-          )}
-        </div>
+      <form className="mx-auto max-w-xl space-y-5">
+        {
+          // build the form based on the state structure specified
+          Object.entries(formState).map(([key, { value, text, type, valid }], index) => {
+            if (type === 'image') {
+              return (
+                <div key={index}>
+                  <label className="block text-base font-medium text-zinc-300 mb-2">{text}</label>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => updateField({ field: key, value: '' })}
+                      className={`h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 bg-zinc-800 transition-colors ${
+                        !value ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-zinc-600 hover:border-zinc-500'
+                      }`}
+                      title="No image"
+                    >
+                      <span className="text-xs text-zinc-500">None</span>
+                    </button>
+                    {SHIP_IMAGE_OPTIONS.map(({ id, src }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => updateField({ field: key, value: id })}
+                        className={`h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 transition-colors ${
+                          value === id ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-zinc-600 hover:border-zinc-500'
+                        }`}
+                      >
+                        <img src={src} alt="" className="h-full w-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+            switch (type) {
+              case 'text':
+              case 'number':
+              case 'email':
+                return (
+                  <div key={index}>
+                    <label className="block text-base font-medium text-zinc-300" htmlFor={key}>{text}</label>
+                    <input
+                      className={`mt-1.5 w-full min-h-[44px] rounded-lg border bg-zinc-800/80 px-3 py-2.5 text-base text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-colors
+                      ${valid ? 'border-zinc-600' : 'border-red-500'}`}
+                      type={type}
+                      name={key}
+                      value={value}
+                      onChange={(e) => updateField({ field: key, value: e.target.value })}
+                    />
+                  </div>
+                );
+              default:
+                return null;
+            }
+          })
+        }
 
-        <div>
-          <label htmlFor="description" className="block text-base font-medium text-zinc-300">
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows={4}
-            value={formData.description}
-            onChange={handleChange}
-            required
-            className="mt-1.5 w-full min-h-[44px] rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-base text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-colors resize-y"
-          />
-          {validationErrors.description && (
-            <p className="mt-1 text-sm text-red-400">{validationErrors.description}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-          <button
-            type="submit"
+        <div className="text-center">
+          <button onClick={(e) => { e.preventDefault(); submit(); }}
             disabled={submitting}
             className="order-1 inline-flex w-full min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-base font-medium text-white hover:bg-blue-500 disabled:opacity-50 transition-colors shadow-sm shadow-blue-900/20 sm:order-none sm:w-auto"
-          >
+            type="submit">
+
             {submitting ? (
-              <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
             ) : (
-              <Wrench className="h-4 w-4 shrink-0" aria-hidden />
+              <Wrench className="h-4 w-4 shrink-0" />
             )}
             {submitting ? 'Constructing...' : 'Construct'}
           </button>
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="w-full min-h-[44px] cursor-pointer rounded-xl border border-zinc-600 px-5 py-3 text-base font-medium text-zinc-300 hover:bg-zinc-800 transition-colors sm:w-auto"
-          >
-            Cancel
-          </button>
         </div>
+
       </form>
     </div>
   );
 }
 
 export default Construction;
+
+
+
+
+
+

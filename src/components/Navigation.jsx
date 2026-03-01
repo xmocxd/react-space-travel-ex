@@ -1,36 +1,35 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Rocket, Globe } from 'lucide-react';
+import { Home } from 'lucide-react';
 
-/**
- * Navigation Component
- *
- * Purpose: Provide consistent navigation across all pages.
- */
-function Navigation() {
+function NavBar({ pages }) {
+  // style links based on whether they are active
   const linkClass = ({ isActive }) =>
-    `navigation-link min-h-[44px] min-w-[44px] inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${
+    `navigation-link min-h-[40px] min-w-[40px] inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+    ${
       isActive
-        ? 'bg-blue-600 text-white shadow-sm shadow-blue-900/20'
-        : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100'
-    }`;
+      ? 'bg-blue-600 text-white shadow-sm shadow-blue-900/20'
+      : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100'
+    }
+    `;
 
   return (
-    <nav className="navigation flex flex-wrap gap-3" aria-label="Main navigation">
+    <nav className="navigation flex flex-wrap gap-2">
       <NavLink to="/" end className={linkClass}>
-        <Home className="h-4 w-4 shrink-0" aria-hidden />
+        <Home className="h-4 w-4 shrink-0" />
         Home
       </NavLink>
-      <NavLink to="/spacecrafts" className={linkClass}>
-        <Rocket className="h-4 w-4 shrink-0" aria-hidden />
-        Spacecrafts
-      </NavLink>
-      <NavLink to="/planets" className={linkClass}>
-        <Globe className="h-4 w-4 shrink-0" aria-hidden />
-        Planets
-      </NavLink>
+
+      {pages.map((page) => 
+        page.showInNav ? (
+        <NavLink key={page.path} to={page.path} className={linkClass}>
+          <page.icon className="h-4 w-4 shrink-0" />
+          {page.title}
+        </NavLink>
+        ) : null
+      )}
     </nav>
   );
 }
 
-export default Navigation;
+export default NavBar;

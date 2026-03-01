@@ -2,21 +2,12 @@ import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import PropTypes from 'prop-types';
 
-/**
- * ErrorMessage Component
- *
- * Purpose: Display error messages consistently across the application.
- *
- * Props:
- * - message (string): Error message to display
- * - onDismiss (function, optional): Handler to dismiss the error
- */
 function ErrorMessage({ message, onDismiss }) {
   if (!message) return null;
 
   return (
     <div className="error-message flex flex-wrap items-center gap-4 rounded-xl border border-red-900/60 bg-red-950/40 px-4 py-3 text-red-200 ring-1 ring-red-900/30 sm:flex-nowrap">
-      <AlertCircle className="h-5 w-5 shrink-0 text-red-400" aria-hidden />
+      <AlertCircle className="h-5 w-5 shrink-0 text-red-400" />
       <p className="flex-1 min-w-0 text-base">{message}</p>
       {typeof onDismiss === 'function' && (
         <button
