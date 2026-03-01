@@ -5,16 +5,10 @@ import { SpacecraftProvider } from './context/SpacecraftContext';
 import { PlanetProvider } from './context/PlanetContext';
 import AppErrorBoundary from './components/AppErrorBoundary';
 
-/**
- * Main App Component
- *
- * Purpose: Root component that sets up routing and global context providers.
- *
- * Structure:
- * - AppErrorBoundary: Catches render errors and shows fallback UI
- * - Context Providers: Wrap the app to provide global state
- * - RouterProvider: Provides the router created with createBrowserRouter
- */
+
+// TODO:
+// fix responsive
+
 function App() {
   return (
     <AppErrorBoundary>

@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Loader2, Wrench } from 'lucide-react';
 import { useSpacecraft } from '../context/SpacecraftContext';
 import ErrorMessage from '../components/ErrorMessage';
 
@@ -59,24 +60,28 @@ function Construction() {
   }, [navigate]);
 
   return (
-    <div className="construction-page">
-      <div className="mb-4">
+    <div className="construction-page space-y-8 sm:space-y-10">
+      <div>
         <button
           type="button"
           onClick={handleCancel}
-          className="text-cyan-400 hover:underline"
+          className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 text-base font-medium text-blue-400 hover:text-blue-300 transition-colors"
         >
-          ← Back / Cancel
+          <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+          Back / Cancel
         </button>
       </div>
 
-      <h2 className="text-2xl font-bold text-white mb-6">Construct New Spacecraft</h2>
+      <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-zinc-50">
+        <Wrench className="h-5 w-5 text-blue-500 shrink-0" aria-hidden />
+        Construct New Spacecraft
+      </h2>
 
       {apiError && <ErrorMessage message={apiError} />}
 
-      <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-slate-300">
+          <label htmlFor="name" className="block text-base font-medium text-zinc-300">
             Name
           </label>
           <input
@@ -86,7 +91,7 @@ function Construction() {
             value={formData.name}
             onChange={handleChange}
             required
-            className="mt-1 w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-white"
+            className="mt-1.5 w-full min-h-[44px] rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-base text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-colors"
           />
           {validationErrors.name && (
             <p className="mt-1 text-sm text-red-400">{validationErrors.name}</p>
@@ -94,7 +99,7 @@ function Construction() {
         </div>
 
         <div>
-          <label htmlFor="capacity" className="block text-sm font-medium text-slate-300">
+          <label htmlFor="capacity" className="block text-base font-medium text-zinc-300">
             Capacity
           </label>
           <input
@@ -105,7 +110,7 @@ function Construction() {
             value={formData.capacity}
             onChange={handleChange}
             required
-            className="mt-1 w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-white"
+            className="mt-1.5 w-full min-h-[44px] rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-base text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-colors"
           />
           {validationErrors.capacity && (
             <p className="mt-1 text-sm text-red-400">{validationErrors.capacity}</p>
@@ -113,7 +118,7 @@ function Construction() {
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-slate-300">
+          <label htmlFor="description" className="block text-base font-medium text-zinc-300">
             Description
           </label>
           <textarea
@@ -123,25 +128,30 @@ function Construction() {
             value={formData.description}
             onChange={handleChange}
             required
-            className="mt-1 w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-white"
+            className="mt-1.5 w-full min-h-[44px] rounded-lg border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-base text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-colors resize-y"
           />
           {validationErrors.description && (
             <p className="mt-1 text-sm text-red-400">{validationErrors.description}</p>
           )}
         </div>
 
-        <div className="flex gap-3 pt-2">
+        <div className="flex flex-col gap-3 pt-2 sm:flex-row">
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-500 disabled:opacity-50"
+            className="order-1 inline-flex w-full min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-base font-medium text-white hover:bg-blue-500 disabled:opacity-50 transition-colors shadow-sm shadow-blue-900/20 sm:order-none sm:w-auto"
           >
+            {submitting ? (
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+            ) : (
+              <Wrench className="h-4 w-4 shrink-0" aria-hidden />
+            )}
             {submitting ? 'Constructing...' : 'Construct'}
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="rounded-lg border border-slate-600 px-4 py-2 text-slate-300 hover:bg-slate-700"
+            className="w-full min-h-[44px] cursor-pointer rounded-xl border border-zinc-600 px-5 py-3 text-base font-medium text-zinc-300 hover:bg-zinc-800 transition-colors sm:w-auto"
           >
             Cancel
           </button>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Rocket, MapPin, ChevronRight, Trash2 } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 /**
@@ -22,32 +23,42 @@ function SpacecraftCard({
   if (!spacecraft) return null;
 
   return (
-    <div className="spacecraft-card rounded-xl border border-slate-600 bg-slate-800/50 p-5 shadow-lg">
-      <h3 className="text-lg font-semibold text-white">{spacecraft.name}</h3>
-      <p className="mt-1 text-sm text-slate-400">
-        Capacity: {spacecraft.capacity?.toLocaleString() ?? '—'}
-      </p>
-      {spacecraft.description && (
-        <p className="mt-2 line-clamp-2 text-sm text-slate-300">
-          {spacecraft.description}
-        </p>
-      )}
-      <p className="mt-2 text-sm text-slate-400">
-        Location: {currentPlanetName ?? `Planet ID ${spacecraft.currentLocation}`}
-      </p>
-      <div className="mt-4 flex items-center gap-3">
+    <div className="spacecraft-card rounded-xl border border-zinc-700/80 bg-zinc-900/60 p-6 shadow-sm ring-1 ring-zinc-800/30 transition-all hover:shadow-md hover:ring-zinc-700/50">
+      <div className="flex items-start gap-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-800 text-blue-400">
+          <Rocket className="h-5 w-5" aria-hidden />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-lg font-semibold text-zinc-50">{spacecraft.name}</h3>
+          <p className="mt-2 text-base text-zinc-400">
+            Capacity: {spacecraft.capacity?.toLocaleString() ?? '—'}
+          </p>
+          {spacecraft.description && (
+            <p className="mt-1.5 line-clamp-2 text-base text-zinc-400">
+              {spacecraft.description}
+            </p>
+          )}
+          <p className="mt-2 flex items-center gap-1.5 text-base text-zinc-500">
+            <MapPin className="h-4 w-4 shrink-0" aria-hidden />
+            {currentPlanetName ?? `Planet ID ${spacecraft.currentLocation}`}
+          </p>
+        </div>
+      </div>
+      <div className="mt-5 flex flex-wrap items-center gap-4 border-t border-zinc-700/50 pt-5">
         <Link
           to={`/spacecrafts/${spacecraft.id}`}
-          className="text-cyan-400 hover:underline"
+          className="inline-flex min-h-[44px] items-center gap-1 text-base font-medium text-blue-400 hover:text-blue-300 transition-colors"
         >
           View details
+          <ChevronRight className="h-4 w-4 shrink-0" aria-hidden />
         </Link>
         {showActions && typeof onDecommission === 'function' && (
           <button
             type="button"
             onClick={() => onDecommission(spacecraft.id)}
-            className="rounded bg-red-600/80 px-3 py-1 text-sm text-white hover:bg-red-600"
+            className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-lg border border-red-900/60 bg-red-950/50 px-3 py-2.5 text-base font-medium text-red-300 hover:bg-red-900/50 transition-colors"
           >
+            <Trash2 className="h-4 w-4 shrink-0" aria-hidden />
             Decommission
           </button>
         )}
@@ -67,12 +78,6 @@ SpacecraftCard.propTypes = {
   currentPlanetName: PropTypes.string,
   onDecommission: PropTypes.func,
   showActions: PropTypes.bool,
-};
-
-SpacecraftCard.defaultProps = {
-  currentPlanetName: undefined,
-  onDecommission: undefined,
-  showActions: true,
 };
 
 export default SpacecraftCard;

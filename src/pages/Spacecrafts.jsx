@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { Rocket, Plus } from 'lucide-react';
 import { useSpacecraft } from '../context/SpacecraftContext';
 import { usePlanets } from '../context/PlanetContext';
 import Loading from '../components/Loading';
@@ -27,13 +28,17 @@ function Spacecrafts() {
   );
 
   return (
-    <div className="spacecrafts-page">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Spacecrafts</h2>
+    <div className="spacecrafts-page space-y-8 sm:space-y-10">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-zinc-50">
+          <Rocket className="h-5 w-5 text-blue-500 shrink-0" aria-hidden />
+          Spacecrafts
+        </h2>
         <Link
           to="/construction"
-          className="rounded-lg bg-cyan-600 px-4 py-2 text-white hover:bg-cyan-500"
+          className="inline-flex w-full min-h-[44px] items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-base font-medium text-white hover:bg-blue-500 transition-colors shadow-sm shadow-blue-900/20 sm:w-auto"
         >
+          <Plus className="h-4 w-4 shrink-0" aria-hidden />
           Construct New Spacecraft
         </Link>
       </div>
@@ -44,7 +49,7 @@ function Spacecrafts() {
       {loading && <Loading message="Loading spacecraft..." />}
 
       {!loading && !error && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
           {spacecraft.map((craft) => (
             <SpacecraftCard
               key={craft.id}
@@ -58,7 +63,10 @@ function Spacecrafts() {
       )}
 
       {!loading && !error && spacecraft.length === 0 && (
-        <p className="text-slate-400">No spacecraft yet. Construct one to get started.</p>
+        <div className="flex flex-col items-center gap-4 rounded-xl border border-zinc-700/80 border-dashed bg-zinc-900/40 px-6 py-12 text-center sm:px-8">
+          <Rocket className="h-10 w-10 text-zinc-600" aria-hidden />
+          <p className="text-base text-zinc-400">No spacecraft yet. Construct one to get started.</p>
+        </div>
       )}
     </div>
   );

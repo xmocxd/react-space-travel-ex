@@ -1,4 +1,5 @@
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 /**
@@ -11,12 +12,12 @@ import PropTypes from 'prop-types';
  */
 function Loading({ message = 'Loading...' }) {
   return (
-    <div className="loading-component flex flex-col items-center justify-center gap-4 py-12">
-      <div
-        className="h-12 w-12 animate-spin rounded-full border-4 border-slate-500 border-t-cyan-400"
+    <div className="loading-component flex flex-col items-center justify-center gap-4 py-12 sm:py-16">
+      <Loader2
+        className="h-10 w-10 animate-spin text-blue-500"
         aria-hidden
       />
-      <p className="text-slate-300">{message}</p>
+      <p className="text-base text-zinc-400">{message}</p>
     </div>
   );
 }

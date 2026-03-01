@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertCircle } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 /**
@@ -14,16 +15,14 @@ function ErrorMessage({ message, onDismiss }) {
   if (!message) return null;
 
   return (
-    <div className="error-message flex items-center gap-3 rounded-lg border border-red-500/50 bg-red-950/30 px-4 py-3 text-red-200">
-      <span className="text-red-400" aria-hidden>
-        ⚠
-      </span>
-      <p className="flex-1">{message}</p>
+    <div className="error-message flex flex-wrap items-center gap-4 rounded-xl border border-red-900/60 bg-red-950/40 px-4 py-3 text-red-200 ring-1 ring-red-900/30 sm:flex-nowrap">
+      <AlertCircle className="h-5 w-5 shrink-0 text-red-400" aria-hidden />
+      <p className="flex-1 min-w-0 text-base">{message}</p>
       {typeof onDismiss === 'function' && (
         <button
           type="button"
           onClick={onDismiss}
-          className="rounded px-3 py-1 text-sm font-medium text-red-300 hover:bg-red-500/20"
+          className="min-h-[44px] cursor-pointer rounded-lg border border-red-800/60 bg-red-900/30 px-3 py-2.5 text-base font-medium text-red-200 hover:bg-red-900/50 transition-colors"
         >
           Dismiss
         </button>
