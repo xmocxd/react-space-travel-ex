@@ -7,7 +7,15 @@ import AppErrorBoundary from './components/AppErrorBoundary';
 
 
 // TODO:
+// b
+//
+// add planet images
+// add images for spacecraft
+// change decommision alert to a modal
+
+// m
 // fix responsive
+// show spacecraft images attached to the planet
 
 function App() {
   return (
