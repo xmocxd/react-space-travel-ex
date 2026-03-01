@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * PlanetCard Component
@@ -35,5 +36,23 @@ function PlanetCard({ planet, stationedSpacecraft = [] }) {
     </div>
   );
 }
+
+PlanetCard.propTypes = {
+  planet: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    name: PropTypes.string,
+    currentPopulation: PropTypes.number,
+  }).isRequired,
+  stationedSpacecraft: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string,
+    })
+  ),
+};
+
+PlanetCard.defaultProps = {
+  stationedSpacecraft: [],
+};
 
 export default PlanetCard;

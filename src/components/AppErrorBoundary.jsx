@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * AppErrorBoundary
@@ -34,5 +35,9 @@ class AppErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+AppErrorBoundary.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default AppErrorBoundary;

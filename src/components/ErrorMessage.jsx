@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * ErrorMessage Component
@@ -30,5 +31,10 @@ function ErrorMessage({ message, onDismiss }) {
     </div>
   );
 }
+
+ErrorMessage.propTypes = {
+  message: PropTypes.string.isRequired,
+  onDismiss: PropTypes.func,
+};
 
 export default ErrorMessage;

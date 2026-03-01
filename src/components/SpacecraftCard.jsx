@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 /**
  * SpacecraftCard Component
@@ -54,5 +55,24 @@ function SpacecraftCard({
     </div>
   );
 }
+
+SpacecraftCard.propTypes = {
+  spacecraft: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    capacity: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    description: PropTypes.string,
+    currentLocation: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }).isRequired,
+  currentPlanetName: PropTypes.string,
+  onDecommission: PropTypes.func,
+  showActions: PropTypes.bool,
+};
+
+SpacecraftCard.defaultProps = {
+  currentPlanetName: undefined,
+  onDecommission: undefined,
+  showActions: true,
+};
 
 export default SpacecraftCard;

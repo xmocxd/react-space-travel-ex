@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import SpaceTravelApi from '../services/SpaceTravelApi';
 
 /**
@@ -118,3 +119,7 @@ export function SpacecraftProvider({ children }) {
     </SpacecraftContext.Provider>
   );
 }
+
+SpacecraftProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
