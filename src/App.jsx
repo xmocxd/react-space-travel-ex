@@ -18,6 +18,8 @@ import AppErrors from './components/AppErrors';
 // fix main page links styles
 // add error message to each field of form
 // figure out ship file names and update so they arent junky
+// check population of planets
+
 // check tests
 
 function App() {

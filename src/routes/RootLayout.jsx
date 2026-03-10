@@ -11,7 +11,7 @@ function RootLayout({ pages }) {
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h1 className="flex items-center gap-2 text-lg font-semibold tracking-tight text-zinc-50 sm:text-xl">
               <Rocket className="h-5 w-5 text-blue-500 shrink-0" />
-              Space Travel
+              Space Travel Manager
             </h1>
             <NavBar pages={pages} />
           </div>
