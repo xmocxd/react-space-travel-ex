@@ -5,9 +5,6 @@ import { SpacecraftProvider } from './context/SpacecraftContext';
 import { PlanetProvider } from './context/PlanetContext';
 import AppErrors from './components/AppErrors';
 
-
-// check tests
-
 function App() {
   return (
     <AppErrors>

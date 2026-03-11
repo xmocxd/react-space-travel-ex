@@ -1,9 +1,14 @@
+if (typeof TextEncoder === 'undefined') {
+  const { TextEncoder: TE, TextDecoder: TD } = require('util');
+  global.TextEncoder = TE;
+  global.TextDecoder = TD;
+}
 const request = require('supertest');
-const { app, resetSpacecrafts } = require('./testServer.cjs');
+const { app, resetAll } = require('./testServer.cjs');
 
 describe('API (Supertest)', () => {
   beforeEach(() => {
-    resetSpacecrafts();
+    resetAll();
   });
 
   describe('GET /api/planets', () => {
@@ -79,6 +84,56 @@ describe('API (Supertest)', () => {
       const res = await request(app)
         .post('/api/spacecrafts')
         .send({ name: 'Ship', description: 'A ship' });
+      expect(res.status).toBe(400);
+    });
+
+    it('assigns new spacecraft location to Earth (planet id 2)', async () => {
+      const res = await request(app)
+        .post('/api/spacecrafts')
+        .send({ name: 'EarthShip', capacity: 500, description: 'Built on Earth' });
+      expect(res.status).toBe(201);
+      expect(res.body.currentLocation).toBe(2);
+    });
+  });
+
+  describe('POST /api/dispatch', () => {
+    it('dispatches spacecraft to a new planet', async () => {
+      const res = await request(app)
+        .post('/api/dispatch')
+        .send({ spacecraftId: 'prispax', targetPlanetId: 3 });
+      expect(res.status).toBe(200);
+      expect(res.body.ok).toBe(true);
+      const craft = (await request(app).get('/api/spacecrafts/prispax')).body;
+      expect(craft.currentLocation).toBe(3);
+    });
+
+    it('moves capacity worth of population from origin to destination', async () => {
+      await request(app)
+        .post('/api/dispatch')
+        .send({ spacecraftId: 'prispax', targetPlanetId: 3 });
+      const planetsRes = await request(app).get('/api/planets');
+      const earth = planetsRes.body.find((p) => p.name === 'Earth');
+      const mars = planetsRes.body.find((p) => p.name === 'Mars');
+      expect(earth.currentPopulation).toBe(90000);
+      expect(mars.currentPopulation).toBe(10000);
+    });
+
+    it('when capacity exceeds origin population, only origin population is moved', async () => {
+      await request(app).patch('/api/planets/2').send({ currentPopulation: 5000 });
+      await request(app)
+        .post('/api/dispatch')
+        .send({ spacecraftId: 'prispax', targetPlanetId: 3 });
+      const planetsRes = await request(app).get('/api/planets');
+      const earth = planetsRes.body.find((p) => p.name === 'Earth');
+      const mars = planetsRes.body.find((p) => p.name === 'Mars');
+      expect(earth.currentPopulation).toBe(0);
+      expect(mars.currentPopulation).toBe(5000);
+    });
+
+    it('returns 400 when spacecraft already at destination', async () => {
+      const res = await request(app)
+        .post('/api/dispatch')
+        .send({ spacecraftId: 'prispax', targetPlanetId: 2 });
       expect(res.status).toBe(400);
     });
   });
