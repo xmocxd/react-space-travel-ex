@@ -12,30 +12,20 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('Construction page', () => {
-  beforeEach(() => {
-    mockNavigate.mockClear();
-  });
+  beforeEach(() => mockNavigate.mockClear());
 
-  it('renders heading and form', () => {
-    renderWithProviders(<Construction />);
+  it('renders heading, form, Back button, and container', () => {
+    const { container } = renderWithProviders(<Construction />);
     expect(screen.getByRole('heading', { name: /Construct New Spacecraft/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Capacity/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Construct/i })).toBeInTheDocument();
-  });
-
-  it('renders Back button', () => {
-    renderWithProviders(<Construction />);
     expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
-  });
-
-  it('renders construction page container', () => {
-    const { container } = renderWithProviders(<Construction />);
     expect(container.querySelector('.construction-page')).toBeInTheDocument();
   });
 
-  it('successfully constructs a spaceship with valid inputs for all fields', async () => {
+  it('constructs spacecraft with valid inputs and navigates', async () => {
     const user = userEvent.setup();
     renderWithProviders(<Construction />);
     await user.type(screen.getByLabelText(/Name/i), 'ValidShip');
@@ -55,35 +45,20 @@ describe('Construction page', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('shows capacity error when capacity is not a positive integer', async () => {
+  it('shows capacity error for invalid capacity (negative, non-numeric, or decimal)', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<Construction />);
-    await user.type(screen.getByLabelText(/Name/i), 'Ship');
-    await user.type(screen.getByLabelText(/Capacity/i), '-1');
-    await user.type(screen.getByLabelText(/Description/i), 'Desc');
-    await user.click(screen.getByRole('button', { name: /Construct/i }));
-    expect(screen.getByText('A whole, positive number is required')).toBeInTheDocument();
-    expect(mockNavigate).not.toHaveBeenCalled();
-  });
-
-  it('shows capacity error for non-numeric capacity', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Construction />);
-    await user.type(screen.getByLabelText(/Name/i), 'Ship');
-    await user.type(screen.getByLabelText(/Capacity/i), 'abc');
-    await user.type(screen.getByLabelText(/Description/i), 'Desc');
-    await user.click(screen.getByRole('button', { name: /Construct/i }));
-    expect(screen.getByText('A whole, positive number is required')).toBeInTheDocument();
-  });
-
-  it('shows capacity error for decimal capacity', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Construction />);
-    await user.type(screen.getByLabelText(/Name/i), 'Ship');
-    await user.type(screen.getByLabelText(/Capacity/i), '1.5');
-    await user.type(screen.getByLabelText(/Description/i), 'Desc');
-    await user.click(screen.getByRole('button', { name: /Construct/i }));
-    expect(screen.getByText('A whole, positive number is required')).toBeInTheDocument();
+    const msg = 'A whole, positive number is required';
+    for (const capacity of ['-1', 'abc', '1.5']) {
+      mockNavigate.mockClear();
+      const { unmount } = renderWithProviders(<Construction />);
+      await user.type(screen.getByLabelText(/Name/i), 'Ship');
+      await user.type(screen.getByLabelText(/Capacity/i), capacity);
+      await user.type(screen.getByLabelText(/Description/i), 'Desc');
+      await user.click(screen.getByRole('button', { name: /Construct/i }));
+      expect(screen.getByText(msg)).toBeInTheDocument();
+      expect(mockNavigate).not.toHaveBeenCalled();
+      unmount();
+    }
   });
 
   it('shows Description is required when description is empty', async () => {
@@ -93,28 +68,6 @@ describe('Construction page', () => {
     await user.type(screen.getByLabelText(/Capacity/i), '100');
     await user.click(screen.getByRole('button', { name: /Construct/i }));
     expect(screen.getByText('Description is required')).toBeInTheDocument();
-    expect(mockNavigate).not.toHaveBeenCalled();
-  });
-
-  it('does not create spaceship with negative capacity', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Construction />);
-    await user.type(screen.getByLabelText(/Name/i), 'BadShip');
-    await user.type(screen.getByLabelText(/Capacity/i), '-10');
-    await user.type(screen.getByLabelText(/Description/i), 'Invalid capacity');
-    await user.click(screen.getByRole('button', { name: /Construct/i }));
-    expect(screen.getByText('A whole, positive number is required')).toBeInTheDocument();
-    expect(mockNavigate).not.toHaveBeenCalled();
-  });
-
-  it('does not create spaceship with invalid capacity', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Construction />);
-    await user.type(screen.getByLabelText(/Name/i), 'BadShip');
-    await user.type(screen.getByLabelText(/Capacity/i), 'zero');
-    await user.type(screen.getByLabelText(/Description/i), 'Invalid');
-    await user.click(screen.getByRole('button', { name: /Construct/i }));
-    expect(screen.getByText('A whole, positive number is required')).toBeInTheDocument();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });
