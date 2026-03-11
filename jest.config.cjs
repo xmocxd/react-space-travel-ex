@@ -8,6 +8,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     '^.+\\.(css|less|scss)$': '<rootDir>/src/__mocks__/styleMock.cjs',
+    '^.+\\.(jpg|jpeg|png|gif|webp|svg|ico)$': '<rootDir>/src/__mocks__/fileMock.cjs',
   },
   transform: {
     '^.+\\.(js|jsx)$': 'babel-jest',

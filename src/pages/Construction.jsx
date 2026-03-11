@@ -145,6 +145,7 @@ function Construction() {
                   <div key={index}>
                     <label className="block text-base font-medium text-zinc-300" htmlFor={key}>{text}</label>
                     <input
+                      id={key}
                       className={`mt-1.5 w-full min-h-[44px] rounded-lg border bg-zinc-800/80 px-3 py-2.5 text-base text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-colors
                       ${valid ? 'border-zinc-600' : 'border-red-500'}`}
                       type={type}

@@ -1,7 +1,3 @@
-/**
- * Minimal Express server for Supertest API tests.
- * Uses in-memory data (no localStorage) so it runs in Node.
- */
 const express = require('express');
 
 const app = express();

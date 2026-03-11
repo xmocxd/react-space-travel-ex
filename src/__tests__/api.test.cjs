@@ -1,8 +1,3 @@
-/**
- * API integration tests using Supertest against the test server.
- * Run with: npm test
- * @jest-environment node
- */
 const request = require('supertest');
 const { app, resetSpacecrafts } = require('./testServer.cjs');
 
@@ -70,6 +65,20 @@ describe('API (Supertest)', () => {
       const res = await request(app)
         .post('/api/spacecrafts')
         .send({ capacity: 100, description: 'No name' });
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when description is missing', async () => {
+      const res = await request(app)
+        .post('/api/spacecrafts')
+        .send({ name: 'Ship', capacity: 100 });
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when capacity is missing', async () => {
+      const res = await request(app)
+        .post('/api/spacecrafts')
+        .send({ name: 'Ship', description: 'A ship' });
       expect(res.status).toBe(400);
     });
   });

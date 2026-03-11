@@ -1,3 +1,17 @@
+## **Testing**
+
+Tests use **Jest** with **Supertest** for API integration tests and **React Testing Library** for component and page tests.
+
+- **API tests** (`src/__tests__/api.test.cjs`): Supertest against a minimal Express server.
+- **Page tests** (`src/pages/*.test.jsx`): Home, NotFound, Spacecrafts, SpacecraftDetails, Construction, Planets.
+- **Run all tests:** `npm test`
+- **Run tests in watch mode:** `npm run test:watch`
+- **Run tests in WSL (recommended on Windows):** `npm run test:wsl`
+
+The `test:wsl` script runs Jest inside Windows Subsystem for Linux so the test environment matches a Linux CI. Ensure [WSL](https://docs.microsoft.com/en-us/windows/wsl/install) is installed and the project is under a path accessible from WSL (e.g. `~/...` or `/mnt/c/...`).
+
+---
+
 ## **Requirements**
 
 - Design a welcoming **home page** that outlines the application's functionality.
