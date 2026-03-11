@@ -31,8 +31,8 @@ function PlanetCard({ planet, stationedSpacecraft = [] }) {
                 const src = getShipImageSrc(craft.pictureUrl);
                 return (
                   <li key={craft.id} className="flex items-center gap-2.5 text-base text-zinc-400">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-zinc-800 ring-1 ring-zinc-700/50">
-                      {src ? <img src={src} alt="" className="h-full w-full object-cover" /> : <Rocket className="h-4 w-4 text-blue-400" />}
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-zinc-800 ring-1 ring-zinc-700/50">
+                      {src ? <img src={src} alt="" className="h-full w-full object-cover" /> : <Rocket className="h-5 w-5 text-blue-400" />}
                     </div>
                     <span>{craft.name}</span>
                   </li>
@@ -43,7 +43,7 @@ function PlanetCard({ planet, stationedSpacecraft = [] }) {
           {planet.currentPopulation != null && (
             <p className="mt-2 flex items-center gap-1.5 text-sm text-zinc-500">
               <Users className="h-4 w-4 shrink-0" />
-              Population: {planet.currentPopulation.toLocaleString()}
+              Population: {planet.currentPopulation.toString()}
             </p>
           )}
         </div>

@@ -13,10 +13,10 @@ function Construction() {
 
   // initial form state, builds the form within component return based on this structure
   const initial = {
-    name: { value: '', text: 'Name', type: 'text', validator: /^.+$/, valid: true },
-    capacity: { value: '', text: 'Capacity', type: 'text', validator: /^[0-9]+$/, valid: true },
-    description: { value: '', text: 'Description', type: 'text', validator: /^.+$/, valid: true },
-    pictureUrl: { value: '', text: 'Ship image', type: 'image', validator: true, valid: true },
+    name: { value: '', text: 'Name', type: 'text', validator: /^.+$/, valid: true, errorMessage: 'Name is required' },
+    capacity: { value: '', text: 'Capacity', type: 'text', validator: /^[0-9]+$/, valid: true, errorMessage: 'A whole, positive number is required' },
+    description: { value: '', text: 'Description', type: 'text', validator: /^.+$/, valid: true, errorMessage: 'Description is required' },
+    pictureUrl: { value: '', text: 'Ship Image', type: 'image', validator: null, valid: true, errorMessage: 'Ship Image is required' },
   };
 
   const [formState, setFormState] = useState(initial);
@@ -37,6 +37,13 @@ function Construction() {
           [field]: { ...newState[field], valid: true }
         };
       } else if (typeof fieldData.validator === 'boolean' && fieldData.value === fieldData.validator) {
+        newState = {
+          ...newState,
+          [field]: { ...newState[field], valid: true }
+        };
+      } 
+      else if (fieldData.validator === null) {
+        // null = no validation, just pass
         newState = {
           ...newState,
           [field]: { ...newState[field], valid: true }
@@ -95,7 +102,7 @@ function Construction() {
     if (result?.success) navigate('/spacecrafts');
   }
   
-  
+  console.log(formState);  
 
   return (
     <div className="construction-page space-y-5 sm:space-y-6">
@@ -126,37 +133,9 @@ function Construction() {
       <form className="mx-auto max-w-xl space-y-5">
         {
           // build the form based on the state structure specified
-          Object.entries(formState).map(([key, { value, text, type, valid }], index) => {
+          Object.entries(formState).map(([key, { value, text, type, valid, errorMessage }], index) => {
             if (type === 'image') {
-              return (
-                <div key={index}>
-                  <label className="block text-base font-medium text-zinc-300 mb-2">{text}</label>
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      type="button"
-                      onClick={() => updateField({ field: key, value: '' })}
-                      className={`h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 bg-zinc-800 transition-colors ${
-                        !value ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-zinc-600 hover:border-zinc-500'
-                      }`}
-                      title="No image"
-                    >
-                      <span className="text-xs text-zinc-500">None</span>
-                    </button>
-                    {SHIP_IMAGE_OPTIONS.map(({ id, src }) => (
-                      <button
-                        key={id}
-                        type="button"
-                        onClick={() => updateField({ field: key, value: id })}
-                        className={`h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 transition-colors ${
-                          value === id ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-zinc-600 hover:border-zinc-500'
-                        }`}
-                      >
-                        <img src={src} alt="" className="h-full w-full object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              );
+
             }
             switch (type) {
               case 'text':
@@ -173,8 +152,40 @@ function Construction() {
                       value={value}
                       onChange={(e) => updateField({ field: key, value: e.target.value })}
                     />
+                    {valid ? null : (<span className='text-red-500'>{errorMessage}</span>)}
                   </div>
                 );
+              case 'image':
+                return (
+                <div key={index}
+                  className={valid ? 'border-zinc-600' : 'border-red-500'}>
+                  <label className="block text-base font-medium text-zinc-300 mb-2">{text}</label>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => updateField({ field: key, value: '' })}
+                      className={`h-24 w-24 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 bg-zinc-800 transition-colors ${
+                        !value ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-zinc-600 hover:border-zinc-500'
+                      }`}
+                      title="No image"
+                    >
+                      <span className="text-xs text-zinc-500">None</span>
+                    </button>
+                    {SHIP_IMAGE_OPTIONS.map(({ id, src }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => updateField({ field: key, value: id })}
+                        className={`h-24 w-24 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 transition-colors ${
+                          value === id ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-zinc-600 hover:border-zinc-500'
+                        }`}
+                      >
+                        <img src={src} alt="" className="h-full w-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
               default:
                 return null;
             }

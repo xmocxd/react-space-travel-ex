@@ -6,20 +6,6 @@ import { PlanetProvider } from './context/PlanetContext';
 import AppErrors from './components/AppErrors';
 
 
-// REVIEW current
-//
-// OTHER
-
-
-// m
-
-// BUG - cannot construct ship - giving validation error
-// show spacecraft images attached to the planet
-// fix main page links styles
-// add error message to each field of form
-// figure out ship file names and update so they arent junky
-// check population of planets
-
 // check tests
 
 function App() {

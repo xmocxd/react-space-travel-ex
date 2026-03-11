@@ -61,11 +61,11 @@ function SpacecraftDetails() {
           (
             <div className="rounded-xl border border-zinc-700/80 bg-zinc-900/60 p-4 shadow-sm ring-1 ring-zinc-800/50 sm:p-5">
               <div className="flex items-start gap-4">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-800 text-blue-400 ring-1 ring-zinc-700/50">
+                <div className="flex h-70 w-70 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-800 text-blue-400 ring-1 ring-zinc-700/50">
                   {shipImageSrc ? (
                     <img src={shipImageSrc} alt="" className="h-full w-full object-cover" />
                   ) : (
-                    <Rocket className="h-10 w-10" />
+                    <Rocket className="h-16 w-16" />
                   )}
                 </div>
                 <h2 className="text-xl font-bold tracking-tight text-zinc-50 pt-1 sm:text-2xl">{craft.name}</h2>

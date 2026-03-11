@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Rocket, List, Wrench, Trash2, Globe, Send, Plus } from 'lucide-react';
+import { getShipImageSrc } from '../constants/shipImages';
 
 function Home({ pages }) {
   return (
@@ -18,14 +19,19 @@ function Home({ pages }) {
       </section>
 
       <section className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4 sm:p-5">
-        {pages.map(({ path, title, longTitle, icon: Icon }) => (
-          <div key={path}>
-            <Link to={`/${path}`} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/80 px-4 py-2.5 text-sm font-medium text-zinc-100 hover:border-blue-500/50 hover:bg-zinc-800 transition-all duration-200 sm:px-5" >
-              <Icon className="h-4 w-4 shrink-0" />
-              {longTitle}
-            </Link>
+        <div className="flex items-center justify-center gap-3 mb-4 last:mb-0 flex-wrap">
+          {pages.map(({ path, title, longTitle, icon: Icon }) => (
+            <div key={path}>
+              <Link to={`/${path}`} className="flex flex-wrap min-h-10 items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/80 px-4 py-2.5 text-sm font-medium text-zinc-100 hover:border-blue-500/50 hover:bg-zinc-800 transition-all duration-200 sm:px-5" >
+                <Icon className="h-4 shrink-0 w-full" /><br />
+                <div>{longTitle}</div>
+              </Link>
+            </div>
+          ))}
+          <div className="w-full text-center text-sm text-zinc-500">
+            <img src={getShipImageSrc('1.jpg')} alt="Example Ship" className="mx-auto rounded-lg border border-zinc-700" />
           </div>
-        ))}
+        </div>
       </section>
 
     </div>

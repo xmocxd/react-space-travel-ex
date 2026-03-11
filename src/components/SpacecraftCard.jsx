@@ -15,8 +15,8 @@ function SpacecraftCard({ spacecraft, currentPlanetName, onDecommission, showAct
   return (
     <div className={`spacecraft-card ${cardClass}`}>
       <div className="flex items-start gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-zinc-800 text-blue-400 ring-1 ring-zinc-700/50">
-          {imgSrc ? <img src={imgSrc} alt="" className="h-full w-full object-cover" /> : <Rocket className="h-6 w-6" />}
+        <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-zinc-800 text-blue-400 ring-1 ring-zinc-700/50">
+          {imgSrc ? <img src={imgSrc} alt="" className="h-full w-full object-cover" /> : <Rocket className="h-10 w-10" />}
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="text-base font-semibold text-zinc-50 sm:text-lg">{spacecraft.name}</h3>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Globe, Loader2, Send } from 'lucide-react';
 import { usePlanets } from '../context/PlanetContext';
 import { useSpacecraft } from '../context/SpacecraftContext';
@@ -7,15 +7,21 @@ import ErrorMessage from '../components/ErrorMessage';
 import PlanetCard from '../components/PlanetCard';
 
 function Planets() {
-  const { planets, loading, error, fetchPlanets, dispatchSpacecraft, getSpacecraftAtPlanet, getPlanetById, } = usePlanets();
+  const { planets, loading, error, clearError, fetchPlanets, dispatchSpacecraft, getSpacecraftAtPlanet, getPlanetById } = usePlanets();
   const { spacecraft, fetchSpacecraft, getSpacecraftById } = useSpacecraft();
 
   const [selectedSpacecraftId, setSelectedSpacecraftId] = useState('');
+
+  // Force refetch API data when visiting the planets page so the list is always fresh
+  useEffect(() => {
+    fetchPlanets();
+    fetchSpacecraft();
+  }, [fetchPlanets, fetchSpacecraft]);
+
   const [selectedSpacecraft, setSelectedSpacecraft] = useState(null);
   const [selectedDestinationId, setSelectedDestinationId] = useState('');
   const [dispatchError, setDispatchError] = useState(null);
   const [dispatching, setDispatching] = useState(false);
-
 
   function handleSpacecraftSelect(e) {
     setSelectedSpacecraftId(e.target.value || '');
